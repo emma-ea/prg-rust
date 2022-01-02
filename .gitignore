@@ -1,2 +1,2 @@
-actix-web/target/
-hello/target/
+./actix-gcd/target/
+./hello/target/
