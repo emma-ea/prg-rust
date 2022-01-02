@@ -1,2 +1,2 @@
-./actix-gcd/target/
-./hello/target/
+actix-gcd/target/
+hello/target/
