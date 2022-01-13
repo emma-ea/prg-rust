@@ -1,9 +1,10 @@
 use std::time;
 use glium::glutin::{event, event_loop, window, dpi};
-use glium::{Surface, glutin};
+use glium::{Surface, glutin, SwapBuffersError};
 use glium;
 
 
+#[allow(unused_variables)]
 fn main() {
 
     let events_loop = event_loop::EventLoop::new();
@@ -11,7 +12,7 @@ fn main() {
 
     events_loop.run(move | ev, wtarget, control_flow | {
         let hmonitor = wtarget.primary_monitor();
-        set_window_attrib(display).expect("SET_WINDOW_ATTRIB_ERROR");
+        set_window_attrib(&display).expect("SET_WINDOW_ATTRIB_ERROR");
 
         let fps = time::Instant::now() + time::Duration::from_millis(500);
         *control_flow = event_loop::ControlFlow::WaitUntil(fps);
@@ -37,8 +38,8 @@ fn init_window<T>(events_loop: &event_loop::EventLoop<T>) -> glium::Display {
     glium::Display::new(wb, ctx, events_loop).unwrap()
 }
 
-fn set_window_attrib<E>(display: glium::Display) -> Result<glium::Frame, E> {
+fn set_window_attrib(display: &glium::Display) -> Result<(), SwapBuffersError> {
     let mut frame = display.draw();
     frame.clear_color(0.0, 0.5, 0.0, 1.0);
-    Ok(frame.finish())
+    frame.finish()
 }
