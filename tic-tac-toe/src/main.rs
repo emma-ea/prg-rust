@@ -1,8 +1,17 @@
 use std::time;
 use glium::glutin::{event, event_loop, window, dpi};
-use glium::{Surface, glutin, SwapBuffersError};
+use glium::{Surface, glutin, SwapBuffersError, Program, implement_vertex, index};
 use glium;
 
+const VHLINE: f64 = 133.33;     
+const WSIZE: f64 = 400.0;      
+
+#[derive(Copy, Clone)]
+struct Vertex {
+    pos: [f32; 2],
+}
+
+implement_vertex!(Vertex, pos);
 
 #[allow(unused_variables)]
 fn main() {
@@ -30,16 +39,52 @@ fn main() {
     });
 }
 
+fn draw_vhlines() -> Vec<Vertex> { 
+    let p1 = Vertex { pos: [0.0, 0.7] };
+    let p2 = Vertex { pos: [0.0, -0.7] };
+    vec![p1, p2]
+}
+
 fn init_window<T>(events_loop: &event_loop::EventLoop<T>) -> glium::Display {
     let wb = window::WindowBuilder::new()
-        .with_inner_size(dpi::LogicalSize::new(400.0, 400.0))
+        .with_inner_size(dpi::LogicalSize::new(WSIZE,WSIZE))
+        .with_resizable(false)
         .with_title("tic-tac-toe");
     let ctx = glutin::ContextBuilder::new();
     glium::Display::new(wb, ctx, events_loop).unwrap()
 }
 
+fn vertex_shader() -> &'static str {
+    r#"
+        #version 140
+        in vec2 pos;
+        void main() { 
+            gl_Position = vec4(pos, 0.0, 0.1); 
+        }
+    "#
+}
+
+fn fragment_shader() -> &'static str {
+    r#"
+        #version 140
+        out vec4 color;
+        void main() { 
+            color = vec4(1.0, 0.0, 0.0, 1.0); 
+        }
+    "#
+}
+
 fn set_window_attrib(display: &glium::Display) -> Result<(), SwapBuffersError> {
     let mut frame = display.draw();
     frame.clear_color(0.0, 0.0, 0.1, 1.0);
+    
+    // vertex, index, program, uniforms, draw_parameters..
+    let vertex_buffer = glium::VertexBuffer::new(display, &draw_vhlines()).unwrap();
+    let indices = index::NoIndices(index::PrimitiveType::LinesList);
+    let vertex_shader_src = vertex_shader(); 
+    let fragment_shader_src = fragment_shader(); 
+    let program = Program::from_source(
+        display, vertex_shader_src, fragment_shader_src, None).unwrap();
+    frame.draw(&vertex_buffer, &indices, &program, &glium::uniforms::EmptyUniforms, &Default::default()).unwrap();
     frame.finish()
 }
