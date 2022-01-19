@@ -3,7 +3,9 @@ use glium::glutin::{event, event_loop, window, dpi};
 use glium::{Surface, glutin, SwapBuffersError, Program, implement_vertex, index};
 use glium;
 
+#[allow(dead_code)]
 const VHLINE: f64 = 133.33;     
+
 const WSIZE: f64 = 400.0;      
 
 #[derive(Copy, Clone)]
@@ -40,9 +42,17 @@ fn main() {
 }
 
 fn draw_vhlines() -> Vec<Vertex> { 
-    let p1 = Vertex { pos: [0.0, 0.7] };
-    let p2 = Vertex { pos: [0.0, -0.7] };
-    vec![p1, p2]
+    let v1 = Vertex { pos: [0.035, 0.09] };
+    let v2 = Vertex { pos: [0.035, -0.09] };
+    let v3 = Vertex { pos: [-0.035, 0.09] };
+    let v4 = Vertex { pos: [-0.035, -0.09] };
+
+    let h1 = Vertex { pos: [-0.09, 0.035] };
+    let h2 = Vertex { pos: [0.09, 0.035] };
+    let h3 = Vertex { pos: [-0.09, -0.035] };
+    let h4 = Vertex { pos: [0.09, -0.035] };
+
+    vec![v1, v2, v3, v4, h1, h2, h3, h4]
 }
 
 fn init_window<T>(events_loop: &event_loop::EventLoop<T>) -> glium::Display {
